@@ -13,7 +13,7 @@
 
 ### Install, Build
 - Using package Manager
- - https://gstreamer.freedesktop.org/documentation/installing/index.html
+  - https://gstreamer.freedesktop.org/documentation/installing/index.html
 - From Sources (usually required for latest version)
   - https://gstreamer.freedesktop.org/documentation/frequently-asked-questions/git.html
   - https://developer.ridgerun.com/wiki/index.php?title=GStreamer_build_on_Ubuntu_16.04#GStreamer_module_build_instructions
@@ -44,7 +44,7 @@ GStreamer plug-ins could be classified into
 #### Plugins - Good, Bad, Ugly ?
 
 - Base
-	- A well-groomed and well-maintained
+	- A well-groomed and well-maintained collection of plugins & elements
 
 Plugins are divided into 3 seperate groups which reflect their quality in terms of code, license, documentation & testing.
 
