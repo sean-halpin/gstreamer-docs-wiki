@@ -15,8 +15,8 @@
 - Using package Manager
  - https://gstreamer.freedesktop.org/documentation/installing/index.html
 - From Sources (usually required for latest version)
-	- https://gstreamer.freedesktop.org/documentation/frequently-asked-questions/git.html
-	- https://developer.ridgerun.com/wiki/index.php?title=GStreamer_build_on_Ubuntu_16.04#GStreamer_module_build_instructions
+  - https://gstreamer.freedesktop.org/documentation/frequently-asked-questions/git.html
+  - https://developer.ridgerun.com/wiki/index.php?title=GStreamer_build_on_Ubuntu_16.04#GStreamer_module_build_instructions
 
 ## What is GStreamer ?
 The GStreamer core function is to provide a framework for plugins, data flow and media type handling/negotiation. It also provides an API to write applications using the various plugins.
@@ -41,41 +41,61 @@ GStreamer plug-ins could be classified into
 - filters: converters, mixers, effects, ...
 - sinks: for audio and video (involves protocol plugins)
 
+#### Plugins - Good, Bad, Ugly ?
+
+- Base
+	- A well-groomed and well-maintained
+
+Plugins are divided into 3 seperate groups which reflect their quality in terms of code, license, documentation & testing.
+
+- Good
+	- Good code, good licensing, well documented, complete with tests.
+- Bad
+	- Almost a good plugin, lacking in code, licensing, documentation or tests.
+- Ugly
+	- Seems to get the job done, missing a lot of what makes a good plugin.
+	- May pose distribution problems.
+
 ## GStreamer Components
+
+### Pipeline
+
+![](https://gstreamer.freedesktop.org/documentation/application-development/introduction/images/simple-player.png)
+- A pipeline is a top level bin.
+- Provides a bus for message passing to the application
+- Elements are added to the pipeline , linked then pipeline state is changed to `Playing`
 
 #### Elements
 For the application programmer, elements are best visualized as black boxes. On the one end, you might put something in, the element does something with it and something else comes out at the other side.
 ##### Source Elements
 - Generates data for the pipeline, maybe reading from disc, network, video or sound card.
-	- ![](https://gstreamer.freedesktop.org/documentation/application-development/basics/images/src-element.png)
+  - ![](https://gstreamer.freedesktop.org/documentation/application-development/basics/images/src-element.png)
   
 ##### Filters, convertors, demuxers, muxers and codecs
 - Filter like elements may have 1-n inputs & 1-n outputs
-	- ![](https://gstreamer.freedesktop.org/documentation/application-development/basics/images/filter-element.png) ![](https://gstreamer.freedesktop.org/documentation/application-development/basics/images/filter-element-multi.png)
+  - ![](https://gstreamer.freedesktop.org/documentation/application-development/basics/images/filter-element.png) ![](https://gstreamer.freedesktop.org/documentation/application-development/basics/images/filter-element-multi.png)
 
 ##### Sink elements
 - Sink elements are the endpoint for a pipeline, these might write to disc, network or display or play some media/data liike video or sound 
-	- ![](https://gstreamer.freedesktop.org/documentation/application-development/basics/images/sink-element.png)
+  - ![](https://gstreamer.freedesktop.org/documentation/application-development/basics/images/sink-element.png)
 
 ##### Linking Elements
 
 By linking a source element with zero or more filter-like elements and finally a sink element, you set up a media pipeline. Data will flow through the elements.
 
-How would we construct the following pipeline as an app programmer  
+How would we construct the following pipeline as an app programmer?
 
 - ![](https://gstreamer.freedesktop.org/documentation/application-development/basics/images/linked-elements.png)
 
 1. Create a Pipeline
 2. Create all elements
-	- source
-	- filter
-	- sink
+  - source
+  - filter
+  - sink
 3. Add elements to the pipeline
 4. Link elements in order using `gst_element_link` or `gst_element_link_many()`
 
 Example ;
-
-    
 	#include <gst/gst.h>
 
 	int
@@ -110,14 +130,14 @@ Example ;
 
 ##### Element States - Briefly
 - GST_STATE_NULL
-	- default element state
-	- no resources are allocated in this state
+  - default element state
+  - no resources are allocated in this state
 - GST_STATE_READY
-	- element has allocated all of its global resources
+  - element has allocated all of its global resources
 - GST_STATE_PAUSED
-	- element has opened the stream, but is not actively processing it
+  - element has opened the stream, but is not actively processing it
 - GST_STATE_PLAYING
-	- clock is running & stream is processing
+  - clock is running & stream is processing
 
 #### Bins
 ![](https://gstreamer.freedesktop.org/documentation/application-development/basics/images/bin-element.png)
@@ -130,8 +150,8 @@ Example ;
 
 - Output  all bus messages on CLI by using -m option `gst-launch-1.0 -m` 
 - A bus is a simple system that takes care of forwarding messages from the streaming threads to an application in its own thread context.
-	- We can peek at the bus by adding a callback for each bus message using `gst_bus_add_watch()`
-	- We can also peek at the bus by adding a callback for bus signals by message type using `gst_bus_add_signal_watch();` then `g_signal_connect()`
+  - We can peek at the bus by adding a callback for each bus message using `gst_bus_add_watch()`
+  - We can also peek at the bus by adding a callback for bus signals by message type using `gst_bus_add_signal_watch();` then `g_signal_connect()`
 - [Code Examples](https://gstreamer.freedesktop.org/documentation/application-development/basics/bus.html)
 
 #### Pads & Caps
@@ -153,37 +173,50 @@ Example ;
 
 #### Buffers & Events
 
-#### Plugins - Good, Bad, Ugly ?
-- Good
-- Bad
-- Ugly
+The data flowing through a pipeline consists of a combination of buffers and events.
+- Buffers contain the actual media data
+- Events contain control information e.g. seeking information and end-of-stream notifiers
+- All this will flow through the pipeline automatically when it's running. 
+
+A buffer consists, amongst others, of:
+- Pointers to memory objects. Memory objects encapsulate a region in the memory.
+- A timestamp for the buffer.
+- A refcount that indicates how many elements are using this buffer. This refcount will be used to destroy the buffer when no element has a reference to it.
+- Buffer flags.
+
+The simple case is that a buffer is created, memory allocated, data put in it, and passed to the next element.
+
+Events are control particles that are sent both up- and downstream in a pipeline along with buffers. Downstream events notify fellow elements of stream states. Possible events include seeking, flushes, end-of-stream notifications and so on. 
 
 ## GStreamer CLI Tools
 
 - gst-inspect-1.0
-	- Discover available plugins
-	- Discover a plugin's pads, capabilites, properties
-	- Discover plugins compatible with another
-	- ` gst-inspect-1.0 videotestsrc`
+  - Discover available plugins
+  - Discover a plugin's pads, capabilites, properties
+  - Discover plugins compatible with another
+  - ` gst-inspect-1.0 videotestsrc`
 - gst-launch-1.0
-	- Debug tool
-	- Build and run a GStreamer pipeline from CLI
-	- src -> sink `gst-launch-1.0 videotestsrc ! ximagesink`
-	- video filesrc, demux, decode, play 
-	- `gst-launch-1.0 filesrc location=/home/sean/Downloads/videoplayback.mp4 ! qtdemux ! decodebin ! autovideosink`
+  - Debug tool
+  - Build and run a GStreamer pipeline from CLI
+  - src -> sink `gst-launch-1.0 videotestsrc ! ximagesink`
+  - video filesrc, demux, decode, play 
+    - `gst-launch-1.0 filesrc location=/home/sean/Downloads/videoplayback.mp4 ! qtdemux ! decodebin ! autovideosink`
 	
 ### Element Naming, Queue & T
 - name demux element, select the video pad, decode, sink
-	- `gst-launch-1.0 filesrc location=/home/sean/Downloads/videoplayback.mp4 ! qtdemux name=dmx dmx.video_0 ! decodebin ! autovideosink`
+    - `gst-launch-1.0 filesrc location=/home/sean/Downloads/videoplayback.mp4 ! qtdemux name=dmx dmx.video_0 ! decodebin ! autovideosink`
 - name demux element, select the audio pad, decode, sink
-	- `gst-launch-1.0 filesrc location=/home/sean/Downloads/videoplayback.mp4 ! qtdemux name=dmx dmx.audio_0 ! decodebin ! autoaudiosink`
+    - `gst-launch-1.0 filesrc location=/home/sean/Downloads/videoplayback.mp4 ! qtdemux name=dmx dmx.audio_0 ! decodebin ! autoaudiosink`
 - name demux element, queue the audio & video pads, decode both, sink
-	- `gst-launch-1.0 filesrc location=/home/sean/Downloads/videoplayback.mp4 ! qtdemux name=dmx dmx.video_0 ! queue ! decodebin ! autovideosink  dmx.audio_0 ! queue ! decodebin ! autoaudiosink`
+    - `gst-launch-1.0 filesrc location=/home/sean/Downloads/videoplayback.mp4 ! qtdemux name=dmx dmx.video_0 ! queue ! decodebin ! autovideosink  dmx.audio_0 ! queue ! decodebin ! autoaudiosink`
 	- Addition of the queue element here adds a pipeline thread boundary & buffering. A thread will fill the buffer at the source side & another will empty it on the sink side.
 - T element allows us to split a src into multiple sink pads
-	- `gst-launch-1.0 filesrc location=/home/sean/Downloads/videoplayback.mp4 ! qtdemux name=dmx dmx.audio_0 ! tee name=t t. ! queue ! decodebin ! audioconvert ! goom ! autovideoconvert ! autovideosink  t. ! queue ! autoaudiosink`
-	- Here after we demux the audio and video, we then T the audio pad. Then link the T'd audio pad to an audio visualisation plugin and send it to our video sink. Then link another T'd audio pad to our audio sink. Giving audio with a visualistion.
+  - `gst-launch-1.0 filesrc location=/home/sean/Downloads/videoplayback.mp4 ! qtdemux name=dmx dmx.audio_0 ! tee name=t t. ! queue ! decodebin ! audioconvert ! goom ! autovideoconvert ! autovideosink  t. ! queue ! autoaudiosink`
+  - Here after we demux the audio and video, we then T the audio pad. Then link the T'd audio pad to an audio visualisation plugin and send it to our video sink. Then link another T'd audio pad to our audio sink. Giving audio with a visualistion.
 
   ### More Interesting CLI Pipelines
-	- GStreamer Cheatsheet
-	- http://wiki.oz9aec.net/index.php/Gstreamer_cheat_sheet
+  - GStreamer Cheatsheet
+    - http://wiki.oz9aec.net/index.php/Gstreamer_cheat_sheet
+
+## Creating an gstreamer pipeline application
+- [Hello World](https://gstreamer.freedesktop.org/documentation/application-development/basics/helloworld.html)
