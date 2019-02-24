@@ -4,21 +4,21 @@
 
 [TOC]
 
-##GStreamer Intro
+## GStreamer Intro
 - Development framework for creating applications like media players, video editors etc
 - Written in C for portability, speed, easy binding
 - Uses GObject for OO support
 - Hosted on https://gitlab.freedesktop.org/gstreamer
 - Bindings in Java, C++, Rust, Python & more
 
-###Install, Build
+### Install, Build
 - Using package Manager
  - https://gstreamer.freedesktop.org/documentation/installing/index.html
 - From Sources (usually required for latest version)
   - https://gstreamer.freedesktop.org/documentation/frequently-asked-questions/git.html
   - https://developer.ridgerun.com/wiki/index.php?title=GStreamer_build_on_Ubuntu_16.04#GStreamer_module_build_instructions
 
-##What is GStreamer ?
+## What is GStreamer ?
 The GStreamer core function is to provide a framework for plugins, data flow and media type handling/negotiation. It also provides an API to write applications using the various plugins.
   
   
@@ -41,20 +41,20 @@ GStreamer plug-ins could be classified into
 - filters: converters, mixers, effects, ...
 - sinks: for audio and video (involves protocol plugins)
 
-##GStreamer Components
+## GStreamer Components
 
-####Elements
-####Bins
-####Bus
-####Pads & Caps
-####Buffers & Events
+#### Elements
+#### Bins
+#### Bus
+#### Pads & Caps
+#### Buffers & Events
 
-####Plugins - Good, Bad, Ugly ?
+#### Plugins - Good, Bad, Ugly ?
 - Good
 - Bad
 - Ugly
 
-##GStreamer CLI Tools
+## GStreamer CLI Tools
 
 - gst-inspect-1.0
   - Discover available plugins
@@ -68,7 +68,7 @@ GStreamer plug-ins could be classified into
   - video filesrc, demux, decode, play 
     - `gst-launch-1.0 filesrc location=/home/sean/Downloads/videoplayback.mp4 ! qtdemux ! decodebin ! autovideosink`
 	
-###Element Naming, Queue & T
+### Element Naming, Queue & T
 - name demux element, select the video pad, decode, sink
     - `gst-launch-1.0 filesrc location=/home/sean/Downloads/videoplayback.mp4 ! qtdemux name=dmx dmx.video_0 ! decodebin ! autovideosink`
 - name demux element, select the audio pad, decode, sink
