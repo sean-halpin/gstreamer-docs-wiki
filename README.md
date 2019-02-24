@@ -74,6 +74,8 @@ How would we construct the following pipeline as an app programmer
 4. Link elements in order using `gst_element_link` or `gst_element_link_many()`
 
 Example ;
+
+    
 	#include <gst/gst.h>
 
 	int
